@@ -8,26 +8,27 @@ namespace BattleSnake2019
     {
         static void Main(string[] args)
         {
-            Webserver ws = new Webserver( "http://localhost:8080/", SendResponse);
+            // Main object that handles all decisions.
+            BattleSnake snake = new BattleSnake();
+            
+            // List of all the endpoints for the BattleSnake.
+            string[] endpoints = new string[]
+            {
+                "http://localhost:8080/start/",
+                "http://localhost:8080/move/",
+                "http://localhost:8080/end/",
+                "http://localhost:8080/ping/"
+            };
+        
+            // Create a webserver, listening to the above endpoints. All responses sent to snake handler.
+            Webserver ws = new Webserver( endpoints, snake.HTTPRequestHandler);
+            
+            // Start up the server.
             ws.Run();
-            Console.WriteLine("A simple webserver. Press a key to quit.");
+            
+            Console.WriteLine("Battle Snake HTTP Webserver is set up. Press any key to exit!");
             Console.ReadKey();
             ws.Stop();
-        }
- 
-        public static string SendResponse(HttpListenerRequest request)
-        {
-            Console.WriteLine("Request type: {0}", request.HttpMethod );
-
-            //Webserver.DisplayWebHeaderCollection(request);
-            
-            // Get the data from the HTTP stream
-            var body = new StreamReader(request.InputStream).ReadToEnd();
-            
-            Console.WriteLine("Body:  {0}", body);
-            
-            
-            return string.Format("<HTML><BODY>My web page.<br>{0}</BODY></HTML>", DateTime.Now);    
         }
     }
 }

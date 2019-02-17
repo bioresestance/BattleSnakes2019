@@ -1,12 +1,11 @@
 using System;
 using System.Net;
 using System.Threading;
-using System.Linq;
 using System.Text;
  
 namespace BattleSnake2019
 {
-    
+   
     // Web serer code based on code found at https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.
     
     public class Webserver
@@ -14,7 +13,7 @@ namespace BattleSnake2019
         private readonly HttpListener _listener = new HttpListener();
         private readonly Func<HttpListenerRequest, string> _responderMethod;
  
-        public Webserver(string address, Func<HttpListenerRequest, string> method)
+        public Webserver(string[] addresses, Func<HttpListenerRequest, string> method)
         {
             if (!HttpListener.IsSupported)
                 throw new NotSupportedException("HTTP Listener is not supported on this computer.");
@@ -22,14 +21,18 @@ namespace BattleSnake2019
  
             // URI prefixes are required, for example 
             // "http://localhost:8080/index/".
-            if (address == null || address.Length == 0)
+            if (addresses == null || addresses.Length == 0)
                 throw new ArgumentException("prefixes");
  
             // A responder method is required
             if (method == null)
                 throw new ArgumentException("method");
- 
-            _listener.Prefixes.Add(address);
+
+            foreach (var address in addresses)
+            {
+                _listener.Prefixes.Add(address);
+            }
+            
  
             _responderMethod = method;
             _listener.Start();
@@ -37,6 +40,7 @@ namespace BattleSnake2019
         
         public void Run()
         {
+            // Creates a thread for each request.
             ThreadPool.QueueUserWorkItem((o) =>
             {
                 Console.WriteLine("Webserver running...");

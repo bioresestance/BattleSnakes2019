@@ -8,16 +8,19 @@ namespace BattleSnake2019
     {
         static void Main(string[] args)
         {
+
+            var URL = "http://localhost:8080/";
+            
             // Main object that handles all decisions.
-            BattleSnake snake = new BattleSnake();
+            BattleSnake snake = new BattleSnake(URL);
             
             // List of all the endpoints for the BattleSnake.
             string[] endpoints = new string[]
             {
-                "http://localhost:8080/start/",
-                "http://localhost:8080/move/",
-                "http://localhost:8080/end/",
-                "http://localhost:8080/ping/"
+                URL + "start/",
+                URL + "move/",
+                URL + "end/",
+                URL + "ping/"
             };
         
             // Create a webserver, listening to the above endpoints. All responses sent to snake handler.

@@ -8,5 +8,12 @@ namespace BattleSnake2019
         public long Width { get; set; }
         public List<Position> Food { get; set; }
         public List<Snake> Snakes { get; set; }
+
+        public Board()
+        {
+            this.Food = new List<Position>();
+            this.Snakes = new List<Snake>(); 
+        }
+        
     }
 }

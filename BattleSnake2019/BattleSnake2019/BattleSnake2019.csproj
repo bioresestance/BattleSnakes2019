@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +52,7 @@
     <Compile Include="RequestJSONParser.cs" />
     <Compile Include="BattleSnakeRequest.cs" />
     <Compile Include="Snake.cs" />
+    <Compile Include="SnakeLogicEngine.cs" />
     <Compile Include="webserver.cs" />
   </ItemGroup>
   <ItemGroup>

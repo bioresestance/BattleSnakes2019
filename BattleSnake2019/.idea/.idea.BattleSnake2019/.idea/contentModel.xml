@@ -20,6 +20,7 @@
         </e>
         <e p="RequestJSONParser.cs" t="Include" />
         <e p="Snake.cs" t="Include" />
+        <e p="SnakeLogicEngine.cs" t="Include" />
         <e p="webserver.cs" t="Include" />
       </e>
       <e p="BattleSnake2019.sln" t="IncludeFlat" />

@@ -56,12 +56,10 @@ namespace BattleSnake2019
 
                 // Add the food to the list.
                 parsedBoard.Food.Add(pos);
-
-                Console.WriteLine("Food at ({0},{1})", pos.X, pos.Y);
             }
 
             // Next parse out all of the snake objects from the JSON.
-            foreach (var snake in board["snake"])
+            foreach (var snake in board["snakes"])
             {
                 var nextSnake = ParseSnake(snake);
                 parsedBoard.Snakes.Add(nextSnake);

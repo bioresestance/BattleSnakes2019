@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.IO;
 using System.Net;
 
@@ -14,8 +15,8 @@ namespace BattleSnake2019
             End = 2,
             Ping = 3
         }
-
-        protected virtual EndPoints EndPointStringToEnum(string endPoint)
+   
+        protected EndPoints EndPointStringToEnum(string endPoint)
         {
             switch (endPoint)
             {
@@ -39,20 +40,29 @@ namespace BattleSnake2019
         // Holds all of the current board information, such as location of food and snakes.
         private Board _currentBoard;
 
-        // Holds the current URL that the snake is running on.
+        // Holds the current URL that the snake server is running on.
         private readonly string _systemUrl;
+
+        private readonly Color _snakeColor;
+
+        private Snake _ourSnake;
+
+        private SnakeLogicEngine _snakeBrain;
         
-        public BattleSnake(string systemUrl)
+        public BattleSnake(string systemUrl, Color snakeColor)
         {
-            _systemUrl = systemUrl;
-            _currentBoard = new Board();
-            _parser = new RequestJsonParser();
+            this._systemUrl = systemUrl;
+            this._snakeColor = snakeColor;
+            this._currentBoard = new Board();
+            this._parser = new RequestJsonParser();
+            this._ourSnake = new Snake();
+            this._snakeBrain = new SnakeLogicEngine();
         }
 
         // Handler for incoming HTTP Requests.
         public string HTTPRequestHandler(HttpListenerRequest request)
         {
-            var responseString = "<HTML><BODY>You should not be seeing this, Something went wrong</BODY></HTML>";
+            var responseString = "You should not be seeing this, Something went wrong";
             
             // Verify the request is a POST method
             if (request.HttpMethod != "POST") return responseString;
@@ -62,7 +72,6 @@ namespace BattleSnake2019
             var body = new StreamReader(request.InputStream).ReadToEnd();
 
             // Ensure the URL was to us.
-            // TODO: This might change if not on local machine, so it might need to be changed.
             if (!request.Url.ToString().Contains(_systemUrl)) return responseString;
             
             
@@ -83,20 +92,45 @@ namespace BattleSnake2019
             return responseString;
         }
 
-        protected virtual string HandleRequest(BattleSnakeRequest request, EndPoints endPoint)
+        // Runs the handler for the given endpoint and request from the game engine.
+        protected string HandleRequest(BattleSnakeRequest request, EndPoints endPoint)
         {
             if (endPoint == EndPoints.Start)
-                return "{ \"color\": \"#ff00ff\" }";
+                return HandleStartRequest(request);
             else if (endPoint == EndPoints.Move)
-                return "{ \"move\": \"right\" }";
+                return HandleMoveRequest(request);
             else if (endPoint == EndPoints.End)
                 return "";
             else
                 return $"<HTML><BODY>My web page.<br>{DateTime.Now}</BODY></HTML>";
         }
-        
-        
-       // private string handleStartEndpoint( )
+
+
+        // Handles a Start request. Saves current board and sends desired color.
+        private string HandleStartRequest(BattleSnakeRequest startRequest)
+        {
+            // Save the starting board so we know where everything is.
+            _currentBoard = startRequest.Board;
+
+            // Turn the color into a hex string.
+            var color = $"#{_snakeColor.R:X}{_snakeColor.G:X}{_snakeColor.B:X}";
+
+            // Th response to this request is the color we want to be.
+            return "{ \"color\":" + "\"" + color + "\"" + " }";
+        }
+
+
+        private string HandleMoveRequest(BattleSnakeRequest moveRequest)
+        {
+            
+            // Save the current board and our snake so we know where everything is.
+            _currentBoard = moveRequest.Board;
+            _ourSnake = moveRequest.You;
+
+            var direction = _snakeBrain.decideMoveDirection( _currentBoard, _ourSnake );
+                    
+            return "{ \"move\":" + "\"" + direction + "\"" + " }";
+        }
         
         
         
